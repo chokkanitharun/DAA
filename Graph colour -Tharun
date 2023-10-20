@@ -1,0 +1,75 @@
+#include <stdio.h>
+
+#define MAX_NODES 100
+
+int graph[MAX_NODES][MAX_NODES];
+int numNodes;
+
+void initializeGraph() {
+    int i, j;
+    for (i = 0; i < MAX_NODES; i++) {
+        for (j = 0; j < MAX_NODES; j++) {
+            graph[i][j] = 0;
+        }
+    }
+}
+
+void addEdge(int u, int v) {
+    graph[u][v] = 1;
+    graph[v][u] = 1;
+}
+
+void greedyColoring() {
+    int result[MAX_NODES];
+    int color;
+    result[0] = 0; // Color of the first node is always 0
+
+    for (int u = 1; u < numNodes; u++) {
+        result[u] = -1; // Initialize color of the vertex
+
+        // Mark the available colors
+        int available[MAX_NODES];
+        for (color = 0; color < numNodes; color++) {
+            available[color] = 1;
+        }
+
+        // Check colors of adjacent vertices and mark them as unavailable
+        for (int v = 0; v < numNodes; v++) {
+            if (graph[u][v] && result[v] != -1) {
+                available[result[v]] = 0;
+            }
+        }
+
+        // Find the first available color
+        for (color = 0; color < numNodes; color++) {
+            if (available[color]) {
+                break;
+            }
+        }
+
+        result[u] = color; // Assign the found color to the vertex
+    }
+
+    // Print the results
+    printf("Vertex\tColor\n");
+    for (int i = 0; i < numNodes; i++) {
+        printf("%d\t%d\n", i, result[i]);
+    }
+}
+
+int main() {
+    initializeGraph();
+
+    // Add edges (example graph)
+    numNodes = 5;
+    addEdge(0, 1);
+    addEdge(0, 2);
+    addEdge(1, 2);
+    addEdge(1, 3);
+    addEdge(2, 3);
+    addEdge(3, 4);
+
+    greedyColoring();
+
+    return 0;
+}
